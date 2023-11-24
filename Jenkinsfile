@@ -1,23 +1,30 @@
-// Jenkinsfile
-
 pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                // Obtém o código-fonte do repositório
+                checkout scm
+            }
+        }
+
         stage('Build') {
             steps {
+                // Compila e constrói o projeto Maven
                 script {
-                    // Construir o projeto usando o Maven
-                    sh 'mvn clean install'
+                    def mvnHome = tool 'Maven'
+                    sh "${mvnHome}/bin/mvn clean install"
                 }
             }
         }
 
         stage('Test') {
             steps {
+                // Executa os testes
                 script {
-                    // Executar os testes
-                    sh 'mvn test'
+                    def mvnHome = tool 'Maven'
+                    sh "${mvnHome}/bin/mvn test"
                 }
             }
         }
@@ -25,6 +32,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 // Adicione etapas de implantação aqui, se necessário
+                script {
+                    def mvnHome = tool 'Maven'
+                    sh "${mvnHome}/bin/mvn deploy"
+                }
             }
         }
     }
